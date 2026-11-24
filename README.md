@@ -1,12 +1,12 @@
 # Oficina de Agentes
 
-Una oficina de **31 perfiles** y **10 skills** para Codex, OpenCode y Claude Code. Dale el trabajo a Dirección y deja que convoque a los departamentos necesarios. Incluye investigación de referencias para diseño web, revisiones de calidad y seguridad, y contratos para entregar trabajo entre agentes.
+Una oficina de **31 perfiles** y **10 skills** para **Cursor, Codex, OpenCode, Claude Code, GitHub Copilot, Gemini CLI, Antigravity y Windsurf**. Dale el trabajo a Dirección y organiza el encargo con los departamentos necesarios. Incluye investigación de referencias para diseño web, revisiones de calidad y seguridad, y contratos para entregar trabajo entre agentes.
 
 [Instalación](docs/instalacion.md) · [Departamentos](docs/guia-departamentos-y-delegacion.md) · [Diseño Web](docs/guia-diseno-web.md) · [Conexiones MCP](docs/connections.md)
 
 La fuente canónica es [`office/registry.json`](office/registry.json): fija identificadores, jerarquía, departamentos, prompts, permisos, skills y capacidades. Los prompts viven en `office/roles/`, los contratos en `office/contracts/` y las políticas en `office/permission-sets/` y `office/capabilities.json`.
 
-`scripts/Build-Office.ps1` genera los perfiles para las tres plataformas:
+`scripts/Build-Office.ps1` genera los perfiles de Codex, OpenCode y Claude Code. El instalador npm reutiliza estos archivos y adapta los roles canónicos para los demás clientes.
 
 | Plataforma | Dirección | Perfiles subordinados |
 |---|---|---|
@@ -18,24 +18,32 @@ Los archivos generados llevan una cabecera con su origen. Edita `office/` y rege
 
 ## Inicio rápido
 
-Clona el repositorio. Con PowerShell 7.4 o posterior, instala en el proyecto donde quieres trabajar. Cambia `All` por `Codex`, `OpenCode` o `Claude` para elegir un entorno.
+Con **Node.js 22+ y Git**, ejecuta en la raíz de tu proyecto. Este ejemplo instala para Cursor:
 
 ```shell
-git clone https://github.com/spa173/oficina-agentes.git
-cd oficina-agentes
-pwsh -NoProfile -File scripts/Install-Office.ps1 -Platform All -Scope Project -Target . -DryRun
-pwsh -NoProfile -File scripts/Install-Office.ps1 -Platform All -Scope Project -Target .
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent cursor
 ```
 
-Si ya tienes un proyecto, indica su ruta con `-Target` y abre una sesión nueva allí. Entrega el encargo en el chat principal de Codex, a `directora` en OpenCode o a la sesión iniciada con `claude --agent directora`.
+| Guía | Opción del instalador | Primer encargo |
+|---|---|---|
+| [Cursor](docs/instalacion/cursor.md) | `--agent cursor` | Modo Agent con la regla `@oficina-agentes` |
+| [Codex](docs/instalacion/codex.md) | `--agent codex` | Chat principal del proyecto |
+| [OpenCode](docs/instalacion/opencode.md) | `--agent opencode` | Selecciona `directora` |
+| [Claude Code](docs/instalacion/claude.md) | `--agent claude` | `claude --agent directora` |
+| [GitHub Copilot](docs/instalacion/copilot.md) | `--agent copilot` | Selecciona `directora` en VS Code o con `/agent` en la CLI |
+| [Gemini CLI](docs/instalacion/gemini.md) | `--agent gemini` | Chat principal, que carga `GEMINI.md` |
+| [Antigravity](docs/instalacion/antigravity.md) | `--agent antigravity` | Selecciona `directora` |
+| [Windsurf / Cascade](docs/instalacion/windsurf.md) | `--agent windsurf` | Ejecuta el workflow `/oficina-agentes` |
 
-La ruta de trabajo es **Dirección → coordinador → especialista**. OpenCode configura `experimental.subagent_depth = 2`. Ningún perfil fija un modelo o proveedor; hereda la selección de la sesión. En Codex, los subagentes también heredan los permisos efectivos del entorno: sus instrucciones no crean un sandbox separado.
+Agrega `--dry-run` para revisar los archivos antes de instalarlos. Consulta las opciones de [instalación global, desde una copia local y por PowerShell](docs/instalacion.md).
+
+La ruta de trabajo es **Dirección → coordinador → especialista**. Gemini CLI realiza los saltos desde el chat principal y Windsurf usa los perfiles como guías del workflow. Elige el modelo en tu cliente. La instalación conserva tu configuración y los permisos de la sesión.
 
 La [guía de departamentos y delegación](docs/guia-departamentos-y-delegacion.md) detalla las rutas, entregables y ejemplos de encargo.
 
 ## Generar y verificar
 
-Desde la raíz del kit, con PowerShell 7.4+ y Python 3.11+:
+Desde la raíz del kit, `npm test` verifica el instalador Node. Con PowerShell 7.4+ y Python 3.11+, comprueba también el registro, los contratos y la instalación histórica:
 
 ```powershell
 pwsh -NoProfile -File scripts/Build-Office.ps1 -Platform All

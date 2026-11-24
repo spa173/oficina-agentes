@@ -1,13 +1,47 @@
 # Instalación de la oficina
 
-Necesitas Git, PowerShell 7.4 o posterior y al menos uno de los clientes compatibles. Para las pruebas de skills y el auditor web, instala Python 3.11 o posterior y comprueba que `python --version` funciona. Los mismos comandos de PowerShell se usan en Windows, macOS y Linux.
+## npm y npx
+
+Instala **Node.js 22+ y Git**. Abre la terminal en la raíz del proyecto que quieres configurar y ejecuta el comando de tu cliente:
+
+| Cliente | Guía específica |
+|---|---|
+| Cursor | [Agentes, skills y chat principal](instalacion/cursor.md) |
+| Codex | [Subagentes y AGENTS.md](instalacion/codex.md) |
+| OpenCode | [Agente principal y configuración](instalacion/opencode.md) |
+| Claude Code | [Perfiles y comando de inicio](instalacion/claude.md) |
+| GitHub Copilot | [VS Code y Copilot CLI](instalacion/copilot.md) |
+| Gemini CLI | [Perfiles y delegación desde el chat principal](instalacion/gemini.md) |
+| Google Antigravity | [App y CLI](instalacion/antigravity.md) |
+| Windsurf | [Workflow manual y skills](instalacion/windsurf.md) |
+
+```shell
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes list
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent cursor --dry-run
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent cursor
+```
+
+Usa `--agent all` para instalar los ocho adaptadores o `--target "RUTA_DEL_PROYECTO"` para usar una carpeta existente distinta. El comando funciona desde GitHub, sin publicación en el registro de npm. Para tener el comando disponible localmente:
+
+```shell
+npm install --global "git+https://github.com/spa173/oficina-agentes.git"
+oficina-agentes install --agent cursor
+```
+
+La instalación global de **npm** pone el comando en tu PATH. Los perfiles se instalan en el proyecto indicado. El instalador de npm genera un respaldo bajo `~/.office-backups/` cuando hay cambios. Si un perfil existente tiene contenido distinto, revisa el archivo antes de usar `--force`. Consulta [recuperación](recuperacion.md).
+
+Si prefieres clonar el repositorio, ejecuta `node npm/cli.mjs install --agent cursor --target "RUTA_DEL_PROYECTO"` desde la copia. No hay dependencias npm para instalar.
+
+## Instalador alternativo PowerShell
+
+Esta alternativa instala Codex, OpenCode y Claude Code, en un proyecto o en las rutas personales del cliente. Requiere PowerShell 7.4+. Para ejecutar el auditor web, instala Python 3.11+ y verifica `python --version`.
 
 ```shell
 git clone https://github.com/spa173/oficina-agentes.git
 cd oficina-agentes
 ```
 
-## Instalar en un proyecto
+### Instalar en un proyecto
 
 Desde el repositorio de la oficina, sustituye `RUTA_DEL_PROYECTO` por la ruta de una carpeta que ya exista. Puedes usar `.` para explorar la oficina en este mismo repositorio.
 
@@ -25,7 +59,7 @@ pwsh -NoProfile -File scripts/Install-Office.ps1 -Platform All -Scope Project -T
 
 [Subagentes de Codex](https://learn.chatgpt.com/docs/agent-configuration/subagents) · [Agentes de OpenCode](https://opencode.ai/docs/agents/) · [Subagentes de Claude Code](https://code.claude.com/docs/en/sub-agents).
 
-## Instalar para todos tus proyectos
+### Instalar perfiles para todos tus proyectos
 
 Desde el repositorio de la oficina, elige la plataforma o usa `All`. El instalador global usa las rutas por defecto de tu perfil de usuario: `~/.codex`, `~/.config/opencode`, `~/.claude` y `~/.agents/skills`. Si tu cliente usa un directorio de configuración personalizado, instala por proyecto o consulta cómo configurar la ubicación en ese cliente.
 
@@ -44,4 +78,4 @@ Conecta GitHub, navegador, bases de datos u otros servicios desde el cliente que
 
 ## Otros agentes
 
-Si tu cliente admite instrucciones de proyecto, adapta las responsabilidades de `office/roles/directora.md` y usa `office/roles/` como fuente para crear sus perfiles nativos. Si admite Agent Skills, copia las carpetas completas de `skills/` a su ubicación documentada. La detección y delegación automáticas se incluyen para Codex, OpenCode y Claude Code.
+Si tu cliente admite instrucciones de proyecto, adapta las responsabilidades de `office/roles/directora.md` y usa `office/roles/` como fuente para crear sus perfiles nativos. Si admite Agent Skills, copia las carpetas completas de `skills/` a su ubicación documentada.

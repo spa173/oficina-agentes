@@ -1,0 +1,11 @@
+{
+  "name": "@spa173/oficina-agentes",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Instalador multiplaforma de la Oficina de Agentes",
+  "bin": { "oficina-agentes": "./npm/cli.mjs" },
+  "engines": { "node": ">=22" },
+  "files": ["npm/", "office/", "skills/", ".codex/agents/", ".opencode/agents/", ".claude/agents/", "AGENTS.md", "opencode.jsonc", "docs/"],
+  "scripts": { "test": "node --test tests/npm-installer.test.mjs" },
+  "repository": { "type": "git", "url": "git+https://github.com/spa173/oficina-agentes.git" }
+}

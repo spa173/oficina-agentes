@@ -2,7 +2,7 @@
 
 La oficina tiene **31 perfiles conceptuales**: Dirección, cinco coordinadores y veinticinco especialistas. Su única fuente canónica es [`office/registry.json`](../office/registry.json), junto con los prompts en `office/roles/`. Esta guía explica cómo encargar el trabajo; los perfiles generados se actualizan mediante `scripts/Build-Office.ps1`.
 
-En **Codex**, el chat principal ejerce la Dirección y dispone de **30 subagentes**. En **OpenCode** selecciona `directora`. En **Claude Code** inicia con `claude --agent directora`. Las tres plataformas usan los mismos identificadores y responsabilidades.
+El punto de entrada es Dirección. En Codex escribe al chat principal, en OpenCode selecciona `directora` y en Claude Code inicia con `claude --agent directora`. Consulta la [guía por cliente](instalacion.md) para Cursor, GitHub Copilot, Gemini CLI, Antigravity y Windsurf. Los perfiles mantienen los mismos identificadores y responsabilidades.
 
 ## Cómo se reparte un encargo
 
