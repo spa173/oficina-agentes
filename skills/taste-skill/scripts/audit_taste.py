@@ -173,7 +173,8 @@ class Finding:
     def __str__(self):
         loc = f"{self.path}:{self.line}"
         snip = f"   …{self.snippet.strip()[:90]}" if self.snippet.strip() else ""
-        return f"[{self.sev:5}] {self.code}  {loc}\n         {self.msg}{'\n' + snip if snip else ''}"
+        detail = "\n" + snip if snip else ""
+        return f"[{self.sev:5}] {self.code}  {loc}\n         {self.msg}{detail}"
 
 
 # ---------------------------------------------------------------- reglas CSS
