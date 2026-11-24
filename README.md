@@ -18,6 +18,10 @@ Los archivos generados llevan una cabecera con su origen. Edita `office/` y rege
 
 ## Inicio rápido
 
+**También puedes pedirle a tu agente que haga la instalación.** Abre el proyecto, copia el mensaje de tu cliente y pégalo en su chat con acceso a terminal.
+
+[Cursor](docs/instalacion/cursor.md#pega-este-mensaje-en-el-chat) · [Codex](docs/instalacion/codex.md#pega-este-mensaje-en-el-chat) · [OpenCode](docs/instalacion/opencode.md#pega-este-mensaje-en-el-chat) · [Claude Code](docs/instalacion/claude.md#pega-este-mensaje-en-el-chat) · [GitHub Copilot](docs/instalacion/copilot.md#pega-este-mensaje-en-el-chat) · [Gemini CLI](docs/instalacion/gemini.md#pega-este-mensaje-en-el-chat) · [Antigravity](docs/instalacion/antigravity.md#pega-este-mensaje-en-el-chat) · [Windsurf](docs/instalacion/windsurf.md#pega-este-mensaje-en-el-chat)
+
 Con **Node.js 22+ y Git**, ejecuta en la raíz de tu proyecto. Este ejemplo instala para Cursor:
 
 ```shell

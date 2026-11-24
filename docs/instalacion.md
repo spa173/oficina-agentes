@@ -2,6 +2,8 @@
 
 ## npm y npx
 
+Cada guía incluye un **mensaje listo para pegar en el chat del agente**. El mensaje le pide que compruebe los requisitos, haga una vista previa e instale la oficina en el proyecto abierto si el destino es correcto y la vista previa termina sin conflictos. Si el cliente pide aprobar el uso de terminal, confirma el comando desde su interfaz.
+
 Instala **Node.js 22+ y Git**. Abre la terminal en la raíz del proyecto que quieres configurar y ejecuta el comando de tu cliente:
 
 | Cliente | Guía específica |
