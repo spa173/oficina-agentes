@@ -22,7 +22,13 @@ Para empezar a usar la oficina, recuérdame este paso: Abre un chat nuevo en Cod
 
 ## Instalación global desde la terminal
 
-Con Node.js 22+ y Git, ejecuta:
+Con Node.js 22+ y Git, comprueba primero el destino:
+
+```shell
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent codex --scope global --dry-run
+```
+
+Si la vista previa indica `"agent": "codex"` y `"scope": "global"`, ejecuta la instalación:
 
 ```shell
 npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent codex --scope global

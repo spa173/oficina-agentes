@@ -18,15 +18,27 @@ Los archivos generados llevan una cabecera con su origen. Edita `office/` y rege
 
 ## Inicio rápido
 
-**Pídele a tu agente que haga la instalación global.** Copia el mensaje de tu cliente y pégalo en su chat con acceso a terminal. Cada mensaje elige el cliente y el ámbito explícitamente. Por ejemplo, el de Codex usa `--agent codex --scope global`.
+Elige primero tu cliente. **`--agent` decide dónde se instala la oficina.** Requisitos: Node.js 22+ y Git.
 
-[Cursor](docs/instalacion/cursor.md#pega-este-mensaje-en-el-chat) · [Codex](docs/instalacion/codex.md#pega-este-mensaje-en-el-chat) · [OpenCode](docs/instalacion/opencode.md#pega-este-mensaje-en-el-chat) · [Claude Code](docs/instalacion/claude.md#pega-este-mensaje-en-el-chat) · [GitHub Copilot](docs/instalacion/copilot.md#pega-este-mensaje-en-el-chat) · [Gemini CLI](docs/instalacion/gemini.md#pega-este-mensaje-en-el-chat) · [Antigravity](docs/instalacion/antigravity.md#pega-este-mensaje-en-el-chat) · [Windsurf](docs/instalacion/windsurf.md#pega-este-mensaje-en-el-chat)
+### Instalación global para Codex
 
-Desde la terminal, con **Node.js 22+ y Git**, puedes consultar los clientes disponibles:
+Primero revisa la vista previa:
 
 ```shell
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes list
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent codex --scope global --dry-run
 ```
+
+Si la salida indica `"agent": "codex"` y `"scope": "global"`, instala la oficina en tu perfil de usuario:
+
+```shell
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent codex --scope global
+```
+
+Después, abre un chat nuevo y pide «Actúa como Dirección de la Oficina de Agentes». También puedes [pegarle a Codex el mensaje completo para que haga la instalación](docs/instalacion/codex.md#pega-este-mensaje-en-el-chat).
+
+### Guías por cliente
+
+Cada guía trae sus propios comandos y un mensaje listo para pegar en el chat del cliente.
 
 | Guía | Opción del instalador | Primer encargo |
 |---|---|---|
