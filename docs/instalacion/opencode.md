@@ -5,27 +5,35 @@
 Usa un chat con acceso a la terminal del proyecto.
 
 ```text
-Instala Oficina de Agentes para OpenCode en la raíz del proyecto abierto.
-Identifica esa carpeta y ejecuta los comandos desde allí. Si hay varias raíces posibles, pregúntame cuál usar.
+Instala Oficina de Agentes globalmente para mi usuario de OpenCode en este equipo.
+Usa el identificador opencode y el ámbito global del usuario local.
 Comprueba node --version, npx --version y git --version. Si falta Git, npx o Node.js 22+, dime qué requisito falta y detente.
 
 Primero ejecuta esta vista previa:
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent opencode --dry-run
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent opencode --scope global --dry-run
 
-Si la vista previa termina correctamente y el destino es el proyecto abierto, ejecuta:
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent opencode
+Si la vista previa termina correctamente e indica agent=opencode, scope=global y mi carpeta personal como target, ejecuta:
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent opencode --scope global
 
-Si la terminal solicita aprobación, muéstramela. Si hay un conflicto, detente y dime qué archivo lo causa. Conserva la configuración existente y evita --force o una instalación global.
-Verifica que existan .opencode/agents/directora.md y .agents/skills/taste-skill/SKILL.md. Resume el resultado e indica la ruta del respaldo si hubo cambios.
+Si la terminal solicita aprobación, muéstramela. Si hay un conflicto, detente y dime qué archivo lo causa. Conserva la configuración existente y evita --force.
+Verifica que existan ~/.config/opencode/agents/directora.md y ~/.agents/skills/taste-skill/SKILL.md. Resume el resultado e indica la ruta del respaldo si hubo cambios.
 Para empezar a usar la oficina, recuérdame este paso: Abre una sesión de OpenCode en el proyecto y selecciona directora.
 ```
 
-## Instalar desde la terminal
+## Instalación global desde la terminal
+
+Con Node.js 22+ y Git, ejecuta:
+
+```shell
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent opencode --scope global
+```
+
+## Instalación sólo en un proyecto
 
 En la raíz del proyecto, con Node.js 22 o posterior:
 
 ```shell
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent opencode
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent opencode --scope project
 ```
 
 Archivos instalados: `.opencode/agents/*.md`, `.agents/skills/` y `opencode.jsonc` si el proyecto carece de configuración propia.

@@ -2,9 +2,9 @@
 
 ## npm y npx
 
-Cada guía incluye un **mensaje listo para pegar en el chat del agente**. El mensaje le pide que compruebe los requisitos, haga una vista previa e instale la oficina en el proyecto abierto si el destino es correcto y la vista previa termina sin conflictos. Si el cliente pide aprobar el uso de terminal, confirma el comando desde su interfaz.
+Cada guía incluye un **mensaje listo para pegar en el chat del agente**. El mensaje indica ambos valores, su cliente y `--scope global`, para instalar en tu perfil de usuario después de verificar el destino. Si el cliente pide aprobar el uso de terminal, confirma el comando desde su interfaz.
 
-Instala **Node.js 22+ y Git**. Abre la terminal en la raíz del proyecto que quieres configurar y ejecuta el comando de tu cliente:
+Instala **Node.js 22+ y Git** y elige el comando de tu cliente:
 
 | Cliente | Guía específica |
 |---|---|
@@ -19,20 +19,20 @@ Instala **Node.js 22+ y Git**. Abre la terminal en la raíz del proyecto que qui
 
 ```shell
 npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes list
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent cursor --dry-run
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent cursor
 ```
 
-Usa `--agent all` para instalar los ocho adaptadores o `--target "RUTA_DEL_PROYECTO"` para usar una carpeta existente distinta. El comando funciona desde GitHub, sin publicación en el registro de npm. Para tener el comando disponible localmente:
+Usa `--scope global` para las rutas personales estándar de tu cliente. Para limitar los archivos a un proyecto, usa `--scope project` y, si corresponde, `--target "RUTA_DEL_PROYECTO"`. La instalación por proyecto es el valor predeterminado de la CLI. Con `--agent all` seleccionas los ocho adaptadores. El comando funciona directamente desde GitHub.
+
+Para tener el comando disponible en el PATH:
 
 ```shell
 npm install --global "git+https://github.com/spa173/oficina-agentes.git"
-oficina-agentes install --agent cursor
+oficina-agentes list
 ```
 
-La instalación global de **npm** pone el comando en tu PATH. Los perfiles se instalan en el proyecto indicado. El instalador de npm genera un respaldo bajo `~/.office-backups/` cuando hay cambios. Si un perfil existente tiene contenido distinto, revisa el archivo antes de usar `--force`. Consulta [recuperación](recuperacion.md).
+La opción `npm install --global` pone el comando en tu PATH. La opción `oficina-agentes install --scope global` instala los perfiles en el directorio de usuario del cliente elegido. El instalador genera un respaldo bajo `~/.office-backups/` cuando hay cambios. Si un perfil existente tiene contenido distinto, revisa el archivo antes de usar `--force`. Si tu cliente usa una ubicación personalizada, confirma dónde descubre perfiles antes de instalar. Consulta [recuperación](recuperacion.md).
 
-Si prefieres clonar el repositorio, ejecuta `node npm/cli.mjs install --agent cursor --target "RUTA_DEL_PROYECTO"` desde la copia. No hay dependencias npm para instalar.
+Desde una copia del repositorio puedes ejecutar `node npm/cli.mjs install --agent codex --scope global`. El instalador usa las librerías incluidas en Node.js.
 
 ## Instalador alternativo PowerShell
 

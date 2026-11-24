@@ -5,27 +5,35 @@
 Usa un chat con acceso a la terminal del proyecto.
 
 ```text
-Instala Oficina de Agentes para Google Antigravity en la raíz del proyecto abierto.
-Identifica esa carpeta y ejecuta los comandos desde allí. Si hay varias raíces posibles, pregúntame cuál usar.
+Instala Oficina de Agentes globalmente para mi usuario de Google Antigravity en este equipo.
+Usa el identificador antigravity y el ámbito global del usuario local.
 Comprueba node --version, npx --version y git --version. Si falta Git, npx o Node.js 22+, dime qué requisito falta y detente.
 
 Primero ejecuta esta vista previa:
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent antigravity --dry-run
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent antigravity --scope global --dry-run
 
-Si la vista previa termina correctamente y el destino es el proyecto abierto, ejecuta:
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent antigravity
+Si la vista previa termina correctamente e indica agent=antigravity, scope=global y mi carpeta personal como target, ejecuta:
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent antigravity --scope global
 
-Si la terminal solicita aprobación, muéstramela. Si hay un conflicto, detente y dime qué archivo lo causa. Conserva la configuración existente y evita --force o una instalación global.
-Verifica que existan .agents/agents/directora.md y .agents/skills/taste-skill/SKILL.md. Resume el resultado e indica la ruta del respaldo si hubo cambios.
+Si la terminal solicita aprobación, muéstramela. Si hay un conflicto, detente y dime qué archivo lo causa. Conserva la configuración existente y evita --force.
+Verifica que existan ~/.gemini/config/agents/directora.md y ~/.gemini/config/skills/taste-skill/SKILL.md. Resume el resultado e indica la ruta del respaldo si hubo cambios.
 Para empezar a usar la oficina, recuérdame este paso: Selecciona directora en el proyecto o desde /agents en la CLI.
 ```
 
-## Instalar desde la terminal
+## Instalación global desde la terminal
+
+Con Node.js 22+ y Git, ejecuta:
+
+```shell
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent antigravity --scope global
+```
+
+## Instalación sólo en un proyecto
 
 En la raíz del proyecto, con Node.js 22 o posterior:
 
 ```shell
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent antigravity
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent antigravity --scope project
 ```
 
 Archivos instalados: `.agents/agents/*.md` y `.agents/skills/`. `directora` es seleccionable como agente principal y los demás se definen como subagentes.

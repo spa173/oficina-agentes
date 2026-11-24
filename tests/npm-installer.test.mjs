@@ -5,6 +5,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
+import { install, restore } from '../npm/installer.mjs';
+import { packageFiles } from '../npm/profiles.mjs';
 
 const cli = fileURLToPath(new URL('../npm/cli.mjs', import.meta.url));
 function run(project, ...args) {
@@ -73,6 +75,53 @@ test('single-target installation detects conflicts before writing and restores e
   writeFileSync(local, installed);
   ok(run(project, 'restore', '--backup', result.backup));
   assert.equal(readFileSync(local, 'utf8'), 'personal backend\n');
+});
+
+test('global Codex installs only to the user profile and can restore its managed instructions', (t) => {
+  const { root, project, backup } = sandbox(t);
+  const userProfile = join(root, 'user-profile');
+  mkdirSync(join(userProfile, '.codex'), { recursive: true });
+  const instructions = join(userProfile, '.codex/AGENTS.md');
+  writeFileSync(instructions, '# Existing user guidance\n');
+  writeFileSync(join(userProfile, '.codex/config.toml'), 'model = "chosen"\n');
+  const options = { agent: 'codex', scope: 'global', backupDir: backup };
+  const preview = install(userProfile, { ...options, dryRun: true });
+  assert.equal(preview.scope, 'global');
+  assert.equal(preview.target, userProfile);
+  assert.ok(preview.files.includes('.codex/AGENTS.md'));
+  assert.ok(preview.files.includes('.codex/agents/diseno-web.toml'));
+  assert.ok(preview.files.includes('.agents/skills/taste-skill/SKILL.md'));
+  assert.equal(preview.files.includes('AGENTS.md'), false);
+  assert.equal(existsSync(backup), false);
+  const result = install(userProfile, options);
+  assert.match(readFileSync(instructions, 'utf8'), /^# Existing user guidance\n[\s\S]*Oficina unificada/);
+  assert.equal(readFileSync(join(userProfile, '.codex/config.toml'), 'utf8'), 'model = "chosen"\n');
+  assert.equal(existsSync(join(userProfile, '.cursor')), false);
+  assert.deepEqual(readdirSync(project), []);
+  assert.deepEqual(install(userProfile, options).files, []);
+  assert.throws(() => restore(userProfile, { backup: result.backup }), /ámbito/);
+  restore(userProfile, { backup: result.backup, scope: 'global' });
+  assert.equal(readFileSync(instructions, 'utf8'), '# Existing user guidance\n');
+  assert.equal(existsSync(join(userProfile, '.codex/agents/diseno-web.toml')), false);
+});
+
+test('global clients use their own discovery paths and CLI rejects a project target in global mode', (t) => {
+  const { project } = sandbox(t);
+  for (const [client, expected] of [
+    ['opencode', '.config/opencode/agents/directora.md'],
+    ['claude', '.claude/agents/directora.md'],
+    ['cursor', '.cursor/skills/oficina-agentes/SKILL.md'],
+    ['copilot', '.copilot/agents/directora.agent.md'],
+    ['gemini', '.gemini/GEMINI.md'],
+    ['antigravity', '.gemini/config/agents/directora.md'],
+    ['windsurf', '.codeium/windsurf/global_workflows/oficina-agentes.md'],
+  ]) assert.ok(packageFiles(client, 'global').has(expected), expected);
+  const incorrect = run(project, 'install', '--agent', 'codex', '--scope', 'global');
+  assert.notEqual(incorrect.status, 0);
+  assert.match(incorrect.stderr, /--target.*--scope project/);
+  const missing = run(project, 'install');
+  assert.match(missing.stderr, /--agent/);
+  assert.deepEqual(readdirSync(project), []);
 });
 
 test('installation rejects a linked destination and preserves ambiguous instruction blocks', (t) => {

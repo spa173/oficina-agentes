@@ -18,19 +18,19 @@ Los archivos generados llevan una cabecera con su origen. Edita `office/` y rege
 
 ## Inicio rápido
 
-**También puedes pedirle a tu agente que haga la instalación.** Abre el proyecto, copia el mensaje de tu cliente y pégalo en su chat con acceso a terminal.
+**Pídele a tu agente que haga la instalación global.** Copia el mensaje de tu cliente y pégalo en su chat con acceso a terminal. Cada mensaje elige el cliente y el ámbito explícitamente. Por ejemplo, el de Codex usa `--agent codex --scope global`.
 
 [Cursor](docs/instalacion/cursor.md#pega-este-mensaje-en-el-chat) · [Codex](docs/instalacion/codex.md#pega-este-mensaje-en-el-chat) · [OpenCode](docs/instalacion/opencode.md#pega-este-mensaje-en-el-chat) · [Claude Code](docs/instalacion/claude.md#pega-este-mensaje-en-el-chat) · [GitHub Copilot](docs/instalacion/copilot.md#pega-este-mensaje-en-el-chat) · [Gemini CLI](docs/instalacion/gemini.md#pega-este-mensaje-en-el-chat) · [Antigravity](docs/instalacion/antigravity.md#pega-este-mensaje-en-el-chat) · [Windsurf](docs/instalacion/windsurf.md#pega-este-mensaje-en-el-chat)
 
-Con **Node.js 22+ y Git**, ejecuta en la raíz de tu proyecto. Este ejemplo instala para Cursor:
+Desde la terminal, con **Node.js 22+ y Git**, puedes consultar los clientes disponibles:
 
 ```shell
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent cursor
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes list
 ```
 
 | Guía | Opción del instalador | Primer encargo |
 |---|---|---|
-| [Cursor](docs/instalacion/cursor.md) | `--agent cursor` | Modo Agent con la regla `@oficina-agentes` |
+| [Cursor](docs/instalacion/cursor.md) | `--agent cursor` | `/oficina-agentes` global o `@oficina-agentes` por proyecto |
 | [Codex](docs/instalacion/codex.md) | `--agent codex` | Chat principal del proyecto |
 | [OpenCode](docs/instalacion/opencode.md) | `--agent opencode` | Selecciona `directora` |
 | [Claude Code](docs/instalacion/claude.md) | `--agent claude` | `claude --agent directora` |
@@ -39,7 +39,7 @@ npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- ofici
 | [Antigravity](docs/instalacion/antigravity.md) | `--agent antigravity` | Selecciona `directora` |
 | [Windsurf / Cascade](docs/instalacion/windsurf.md) | `--agent windsurf` | Ejecuta el workflow `/oficina-agentes` |
 
-Agrega `--dry-run` para revisar los archivos antes de instalarlos. Consulta las opciones de [instalación global, desde una copia local y por PowerShell](docs/instalacion.md).
+Agrega `--scope global` para instalar en tu perfil de usuario o `--scope project` para el proyecto actual. Usa `--dry-run` para revisar el destino antes de escribir. Consulta las [opciones de instalación](docs/instalacion.md).
 
 La ruta de trabajo es **Dirección → coordinador → especialista**. Gemini CLI realiza los saltos desde el chat principal y Windsurf usa los perfiles como guías del workflow. Elige el modelo en tu cliente. La instalación conserva tu configuración y los permisos de la sesión.
 

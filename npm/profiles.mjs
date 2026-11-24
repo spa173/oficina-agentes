@@ -17,6 +17,28 @@ export const platforms = Object.freeze({
 export const start = '<!-- oficina-unificada:inicio -->';
 export const end = '<!-- oficina-unificada:fin -->';
 
+const globalPrefixes = {
+  opencode: ['.opencode', '.config/opencode'],
+  copilot: ['.github', '.copilot'],
+  antigravity: ['.agents', '.gemini/config'],
+  windsurf: ['.windsurf', '.codeium/windsurf'],
+};
+
+function profilePath(client, path, scope) {
+  if (scope === 'project') return path;
+  if (client === 'codex' && path === 'AGENTS.md') return '.codex/AGENTS.md';
+  if (client === 'gemini' && path === 'GEMINI.md') return '.gemini/GEMINI.md';
+  if (client === 'opencode' && path === 'opencode.jsonc') return '.config/opencode/opencode.jsonc';
+  if (client === 'windsurf') {
+    if (path.startsWith('.oficina-agentes/')) return '.codeium/windsurf/' + path.slice(1);
+    if (path.startsWith('.windsurf/workflows/')) {
+      return '.codeium/windsurf/global_workflows/' + path.slice('.windsurf/workflows/'.length);
+    }
+  }
+  const [from, to] = globalPrefixes[client] ?? [];
+  return from && path.startsWith(from + '/') ? to + path.slice(from.length) : path;
+}
+
 function prompt(role) {
   const text = asset(role.prompt).toString('utf8').trimEnd().replace(/\r\n/g, '\n');
   if (!role.skills.length) return text;
@@ -38,16 +60,19 @@ function* assets(directory) {
   }
 }
 
-export function packageFiles(selection) {
+export function packageFiles(selection, scope = 'project') {
+  if (scope !== 'project' && scope !== 'global') throw new Error('Ámbito inválido: ' + scope);
   if (selection !== 'all' && !Object.hasOwn(platforms, selection)) throw new Error('Agente desconocido: ' + selection);
   const clients = selection === 'all' ? Object.keys(platforms) : [selection];
   const files = new Map();
-  const add = (path, data, options = {}) => files.set(path, { data: Buffer.from(data), ...options });
   const director = roles.find((role) => role.kind === 'director');
   const directorPrompt = prompt(director);
   const geminiLimit = 'Gemini CLI no permite delegación anidada. En este cliente, Dirección puede invocar directamente al especialista autorizado tras recibir del coordinador un brief con su nombre, alcance y entregable. Los coordinadores preparan ese brief y devuelven el resultado al chat principal.';
 
   for (const client of clients) {
+    const add = (path, data, options = {}) => files.set(profilePath(client, path, scope), {
+      data: Buffer.from(data), ...options,
+    });
     for (const role of roles) {
       const { id, kind, permission_set, capabilities } = role;
       const primary = kind === 'director';
@@ -97,12 +122,27 @@ export function packageFiles(selection) {
     }
     if (client === 'opencode') add('opencode.jsonc', asset('opencode.jsonc'), { openCodeConfig: true });
     if (client === 'cursor') {
-      add('.cursor/rules/oficina-agentes.mdc', `---\nalwaysApply: false\n---\n\n${directorPrompt}\n`);
+      if (scope === 'global') {
+        add('.cursor/skills/oficina-agentes/SKILL.md', [
+          '---',
+          'name: oficina-agentes',
+          'description: Úsala cuando la persona usuaria pida organizar un encargo con la Oficina de Agentes.',
+          '---',
+          '',
+          directorPrompt,
+          '',
+        ].join('\n'));
+      } else {
+        add('.cursor/rules/oficina-agentes.mdc', `---\nalwaysApply: false\n---\n\n${directorPrompt}\n`);
+      }
     }
     if (client === 'gemini') {
       add('GEMINI.md', `${start}\n\n${directorPrompt}\n\n## Delegación en Gemini CLI\n${geminiLimit}\n\n${end}`, { merge: true });
     }
     if (client === 'windsurf') {
+      const location = scope === 'global' ? '~/.codeium/windsurf/' : '';
+      const rolesPath = location + 'oficina-agentes/roles/';
+      const skillsPath = scope === 'global' ? location + 'skills/' : '.windsurf/skills/';
       add('.windsurf/workflows/oficina-agentes.md', [
         '---',
         'description: Organiza un encargo con los perfiles de la Oficina de Agentes.',
@@ -110,8 +150,8 @@ export function packageFiles(selection) {
         '',
         '# Oficina de Agentes',
         '',
-        'Lee `.oficina-agentes/roles/directora.md` para organizar el encargo de la persona usuaria.',
-        'Consulta sólo los perfiles de `.oficina-agentes/roles/` y las skills de `.windsurf/skills/` pertinentes al encargo.',
+        'Lee `' + (scope === 'global' ? rolesPath : '.' + rolesPath) + 'directora.md` para organizar el encargo de la persona usuaria.',
+        'Consulta sólo los perfiles de `' + (scope === 'global' ? rolesPath : '.' + rolesPath) + '` y las skills de `' + skillsPath + '` pertinentes al encargo.',
         'En Cascade, aplica los perfiles como guías de trabajo. Si la sesión carece de agentes configurados, coordina en el chat principal y declara ese límite. Respeta las autorizaciones descritas en los perfiles.',
         '',
       ].join('\n'));

@@ -4,7 +4,8 @@ import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { end, packageFiles, start } from './profiles.mjs';
 
-const configPaths = ['opencode.jsonc', 'opencode.json', '.opencode/opencode.jsonc', '.opencode/opencode.json'];
+const projectConfigPaths = ['opencode.jsonc', 'opencode.json', '.opencode/opencode.jsonc', '.opencode/opencode.json'];
+const globalConfigPaths = ['.config/opencode/opencode.jsonc', '.config/opencode/opencode.json'];
 const utf8 = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true });
 
 function info(path) {
@@ -74,10 +75,15 @@ function apply(root, changes) {
   }
 }
 
-export function install(root, { agent, force, dryRun, backupDir }) {
-  const entries = packageFiles(agent);
+export function install(root, { agent, scope = 'project', force, dryRun = false, backupDir }) {
+  const entries = packageFiles(agent, scope);
+  const configPaths = scope === 'global' ? globalConfigPaths : projectConfigPaths;
   const changes = [];
   const messages = [];
+  if (scope === 'global' && (agent === 'codex' || agent === 'all') &&
+      snapshot(targetFile(root, '.codex/AGENTS.override.md'))?.data.length) {
+    messages.push('Codex usa AGENTS.override.md si existe y contiene instrucciones. Revisa ese archivo para activar el bloque de Dirección.');
+  }
   for (const [relative, entry] of entries) {
     if (entry.openCodeConfig && configPaths.some((name) => snapshot(targetFile(root, name)))) {
       messages.push('Se conservó la configuración de OpenCode. Si hace falta, selecciona directora y revisa experimental.subagent_depth en tu configuración.');
@@ -90,7 +96,8 @@ export function install(root, { agent, force, dryRun, backupDir }) {
     changes.push({ relative, before, data, expected: before ? digest(before.data) : null, mode: before?.mode ?? 0o644 });
   }
   const files = changes.map(({ relative }) => relative);
-  if (dryRun || !changes.length) return { agent, dryRun, files, backup: null, messages };
+  const result = { agent, scope, target: root, dryRun, files, backup: null, messages };
+  if (dryRun || !changes.length) return result;
 
   const parent = resolve(backupDir ?? join(homedir(), '.office-backups'));
   mkdirSync(parent, { recursive: true, mode: 0o700 });
@@ -100,30 +107,31 @@ export function install(root, { agent, force, dryRun, backupDir }) {
     if (before) writeFileSync(join(backup, index + '.bak'), before.data, { mode: 0o600, flag: 'wx' });
     return { relative, before: expected, after: digest(data), mode: before?.mode ?? null };
   });
-  writeFileSync(join(backup, 'manifest.json'), JSON.stringify({ version: 1, project: root, agent, items }, null, 2), {
+  writeFileSync(join(backup, 'manifest.json'), JSON.stringify({ version: 1, project: root, agent, scope, items }, null, 2), {
     mode: 0o600, flag: 'wx',
   });
   try {
     apply(root, changes);
   } catch (error) {
-    try { restore(root, { backup, dryRun: false }); }
+    try { restore(root, { backup, scope }); }
     catch { throw new Error(error.message + ' Revisa el respaldo antes de continuar: ' + backup); }
     throw new Error(error.message + ' Se restauraron los archivos anteriores. Respaldo: ' + backup);
   }
-  return { agent, dryRun: false, files, backup, messages };
+  return { ...result, backup };
 }
 
 function isHash(value) {
   return typeof value === 'string' && /^[0-9a-f]{64}$/.test(value);
 }
 
-export function restore(root, { backup, dryRun }) {
+export function restore(root, { backup, scope = 'project', dryRun = false }) {
   const folder = realpathSync(backup);
   const manifest = JSON.parse(readFileSync(targetFile(folder, 'manifest.json'), 'utf8'));
   if (manifest.version !== 1 || manifest.project !== root || !Array.isArray(manifest.items)) {
-    throw new Error('El respaldo no corresponde al proyecto indicado.');
+    throw new Error('El respaldo no corresponde al destino indicado.');
   }
-  const allowed = packageFiles(manifest.agent);
+  if (scope !== (manifest.scope ?? 'project')) throw new Error('El ámbito del respaldo no coincide. Indica el --scope usado al instalar.');
+  const allowed = packageFiles(manifest.agent, scope);
   const seen = new Set();
   const changes = [];
   for (const [index, item] of manifest.items.entries()) {
@@ -142,5 +150,5 @@ export function restore(root, { backup, dryRun }) {
     changes.push({ relative, expected, data, mode });
   }
   if (!dryRun) apply(root, changes);
-  return { dryRun, files: changes.map(({ relative }) => relative) };
+  return { scope, target: root, dryRun, files: changes.map(({ relative }) => relative) };
 }

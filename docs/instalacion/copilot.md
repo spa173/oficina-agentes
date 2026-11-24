@@ -5,27 +5,35 @@
 Usa un chat con acceso a la terminal del proyecto.
 
 ```text
-Instala Oficina de Agentes para GitHub Copilot en la raíz del proyecto abierto.
-Identifica esa carpeta y ejecuta los comandos desde allí. Si hay varias raíces posibles, pregúntame cuál usar.
+Instala Oficina de Agentes globalmente para mi usuario de GitHub Copilot en este equipo.
+Usa el identificador copilot y el ámbito global del usuario local.
 Comprueba node --version, npx --version y git --version. Si falta Git, npx o Node.js 22+, dime qué requisito falta y detente.
 
 Primero ejecuta esta vista previa:
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent copilot --dry-run
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent copilot --scope global --dry-run
 
-Si la vista previa termina correctamente y el destino es el proyecto abierto, ejecuta:
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent copilot
+Si la vista previa termina correctamente e indica agent=copilot, scope=global y mi carpeta personal como target, ejecuta:
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent copilot --scope global
 
-Si la terminal solicita aprobación, muéstramela. Si hay un conflicto, detente y dime qué archivo lo causa. Conserva la configuración existente y evita --force o una instalación global.
-Verifica que existan .github/agents/directora.agent.md y .github/skills/taste-skill/SKILL.md. Resume el resultado e indica la ruta del respaldo si hubo cambios.
-Para empezar a usar la oficina, recuérdame este paso: Selecciona directora en el chat de VS Code o mediante /agent en Copilot CLI.
+Si la terminal solicita aprobación, muéstramela. Si hay un conflicto, detente y dime qué archivo lo causa. Conserva la configuración existente y evita --force.
+Verifica que existan ~/.copilot/agents/directora.agent.md y ~/.copilot/skills/taste-skill/SKILL.md. Resume el resultado e indica la ruta del respaldo si hubo cambios.
+Para empezar a usar la oficina, recuérdame este paso: En Copilot CLI, escribe /agent y elige directora. En VS Code, comprueba la lista de agentes de usuario.
 ```
 
-## Instalar desde la terminal
+## Instalación global desde la terminal
+
+Con Node.js 22+ y Git, ejecuta:
+
+```shell
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent copilot --scope global
+```
+
+## Instalación sólo en un proyecto
 
 En la raíz del proyecto, con Node.js 22 o posterior:
 
 ```shell
-npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent copilot
+npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes install --agent copilot --scope project
 ```
 
 Archivos instalados: `.github/agents/*.agent.md` y `.github/skills/`.

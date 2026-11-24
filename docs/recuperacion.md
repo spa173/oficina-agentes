@@ -9,7 +9,7 @@ npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- ofici
 npx --yes --package="git+https://github.com/spa173/oficina-agentes.git" -- oficina-agentes restore --backup "RUTA_DEL_RESPALDO"
 ```
 
-Si ejecutas el comando desde otra carpeta, añade `--target "RUTA_DEL_PROYECTO"`. La restauración comprueba las huellas de los archivos y conserva las ediciones posteriores: si hay una, detiene la operación y muestra el archivo.
+Si instalaste en el perfil de usuario, añade `--scope global` a ambos comandos. Para un proyecto distinto de la carpeta actual, añade `--target "RUTA_DEL_PROYECTO"`. La restauración comprueba las huellas y se detiene si un archivo se editó después de la instalación.
 
 ## Instalación con PowerShell
 
