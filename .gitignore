@@ -1,0 +1,11 @@
+/.agents/
+/.claude/skills/
+/.office-backups/
+/.superpowers/
+/.pytest_cache/
+**/__pycache__/
+*.pyc
+*.log
+.env
+.env.*
+.claude/settings.local.json

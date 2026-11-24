@@ -1,0 +1,5 @@
+.opencode/agents/*.md text eol=lf
+.codex/agents/*.toml text eol=lf
+.claude/agents/*.md text eol=lf
+opencode.jsonc text eol=lf
+/AGENTS.md text eol=lf

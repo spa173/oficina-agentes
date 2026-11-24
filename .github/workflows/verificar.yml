@@ -1,0 +1,34 @@
+name: Verificar oficina
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.11'
+      - name: Comprobar perfiles generados
+        shell: pwsh
+        run: pwsh -NoProfile -File scripts/Build-Office.ps1 -Platform All -Check
+      - name: Probar registro, contratos e instalación
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -File scripts/Test-Office.Core.ps1
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          pwsh -NoProfile -File scripts/Test-Office.Skills.ps1
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          pwsh -NoProfile -File scripts/Test-Office.Install.ps1
+          exit $LASTEXITCODE
